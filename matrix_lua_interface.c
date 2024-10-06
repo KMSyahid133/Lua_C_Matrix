@@ -166,7 +166,7 @@ const luaL_Reg functions[] = {
 
 //Gateway function that opens the rest of the function
 int lua_matrix_library(lua_State* L) {
-    printf("Starting library\n");
+    // printf("Starting library\n");
     luaL_newlib(L, functions);
     return 1;
 }
