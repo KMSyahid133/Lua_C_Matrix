@@ -11,11 +11,12 @@ OBJECTS = $(wildcard ./Objects/*.o)
 
 INTERFACE = ./matrix_lua_interface.c
 LUAHEADER = ./Lua_Header/lua_header.h
-INTERFACEOBJ = ./Objects/interface.o
+INTERFACEOBJ = interface.o
 
 all: $(OBJS) $(INTERFACEOBJ) dll
 # black magic fuckery
 ./Objects/%.o: ./C_Matrix/%.c
+	@mkdir ./Objects -p
 	$(CC) $(OFLAG) $< -o $@
 
 $(INTERFACEOBJ): $(INTERFACE) $(LUAHEADER) $(HEADSRCS) 
@@ -23,7 +24,7 @@ $(INTERFACEOBJ): $(INTERFACE) $(LUAHEADER) $(HEADSRCS)
 	
 
 dll: $(OBJS) $(INTERFACEOBJ) $(LUAHEADER) $(HEADSRCS)
-	$(CC) $(OBJS) $(INTERFACEOBJ) $(DLLFLAG) -o matrix.dll
+	$(CC) $(OBJS) ./Objects/$(INTERFACEOBJ) $(DLLFLAG) -o matrix.dll
 
 .PHONY: clean
 
