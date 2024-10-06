@@ -1,0 +1,7 @@
+make.exe.stackdump
+matrix.dll
+matrix.dll
+Lua_Header/lua54.dll
+Objects/interface.o
+Objects/matrix_operation.o
+Objects/matrix.o
