@@ -196,8 +196,7 @@ function Matrix.__sub(self, b)
     return c
 end
 
---@param a bruh
---@return table
+--Returns the product of 2 matrices
 function Matrix.__mul(self, b)
     if self.x ~= b.y then
         error("Size doesn't fit for matrix multiplication")
