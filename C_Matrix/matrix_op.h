@@ -18,4 +18,6 @@ int matrix_sub(Matrix* a, Matrix* b, Matrix* c);
 
 int matrix_mul(Matrix* a, Matrix* b, Matrix* result);
 
+int strassen(Matrix* a, Matrix* b, Matrix* result);
+
 #endif

@@ -22,7 +22,8 @@ typedef struct lm {
 } luaMatrix;
 
 //
-int matrixL_create(lua_State* L) {
+int matrixL_create(lua_State* L)
+{
     //Parameters
     lua_Integer x = luaL_checkinteger(L, 1);
     lua_Integer y = luaL_checkinteger(L, 2);
@@ -46,7 +47,8 @@ int matrixL_create(lua_State* L) {
 }
 
 //Always need to be called
-int matrixL_free(lua_State* L) {
+int matrixL_free(lua_State* L)
+{
     luaMatrix* lm = (luaMatrix*) lua_touserdata(L, 1);
     free_matrix(lm->matrix); //Free the internal matrix
     free(lm); //Free the pointer to internal matrix
@@ -55,7 +57,8 @@ int matrixL_free(lua_State* L) {
 
 //Get an element from the matrix.
 //All of the checks must be implemented in Lua to avoid clutter in the C code
-int matrixL_get(lua_State* L) {
+int matrixL_get(lua_State* L)
+{
     luaMatrix* lm = (luaMatrix*) lua_touserdata(L, 1);
     lua_Integer x = luaL_checkinteger(L, 2);
     lua_Integer y = luaL_checkinteger(L, 3);
@@ -66,7 +69,8 @@ int matrixL_get(lua_State* L) {
 }
 
 //Set the element
-int matrixL_set(lua_State* L) {
+int matrixL_set(lua_State* L)
+{
     luaMatrix* lm = (luaMatrix*) lua_touserdata(L, 1);
     lua_Integer x = luaL_checkinteger(L, 2);
     lua_Integer y = luaL_checkinteger(L, 3);
@@ -79,7 +83,8 @@ int matrixL_set(lua_State* L) {
     return 0;
 }
 
-int matrixL_add(lua_State* L) {
+int matrixL_add(lua_State* L)
+{
     //Arguments
     luaMatrix* a = (luaMatrix*) lua_touserdata(L, 1);
     luaMatrix* b = (luaMatrix*) lua_touserdata(L, 2);
@@ -104,7 +109,8 @@ int matrixL_add(lua_State* L) {
     return 1;
 }
 
-int matrixL_sub(lua_State* L) {
+int matrixL_sub(lua_State* L)
+{
     //Arguments
     luaMatrix* a = (luaMatrix*) lua_touserdata(L, 1);
     luaMatrix* b = (luaMatrix*) lua_touserdata(L, 2);
@@ -129,7 +135,8 @@ int matrixL_sub(lua_State* L) {
     return 1;
 }
 
-int matrixL_mul(lua_State* L) {
+int matrixL_mul(lua_State* L)
+{
     luaMatrix* a = (luaMatrix*) lua_touserdata(L, 1);
     luaMatrix* b = (luaMatrix*) lua_touserdata(L, 2);
 
@@ -151,6 +158,16 @@ int matrixL_mul(lua_State* L) {
     return 1;
 }
 
+int matrixL_strassen(lua_State* L)
+{
+    luaMatrix* a = (luaMatrix*) lua_touserdata(L, 1);
+    luaMatrix* b = (luaMatrix*) lua_touserdata(L, 2);
+
+    Matrix* c = create_matrix(b->matrix->x, a->matrix->y);
+
+    int stat = strassen(a, b, c);
+}
+
 const luaL_Reg functions[] = {
     {"create", matrixL_create},
     {"free", matrixL_free},
@@ -160,6 +177,7 @@ const luaL_Reg functions[] = {
     {"mul", matrixL_mul},
     {"get", matrixL_get},
     {"set", matrixL_set},
+    {"strassen", matrixL_strassen},
     {NULL, NULL}
 };
 
