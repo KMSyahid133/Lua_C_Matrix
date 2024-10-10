@@ -165,7 +165,9 @@ int matrixL_strassen(lua_State* L)
 
     Matrix* c = create_matrix(b->matrix->x, a->matrix->y);
 
-    int stat = strassen(a, b, c);
+    int stat = strassen(a->matrix, b->matrix, c->matrix);
+
+    return 0;
 }
 
 const luaL_Reg functions[] = {
