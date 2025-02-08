@@ -1,3 +1,4 @@
 matrix.dll
 Lua_Header/lua54.dll
 Objects/*.o
+out.txt

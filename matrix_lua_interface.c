@@ -59,12 +59,18 @@ int matrixL_free(lua_State* L)
 //All of the checks must be implemented in Lua to avoid clutter in the C code
 int matrixL_get(lua_State* L)
 {
+    printf("matrixL_get\n");
     luaMatrix* lm = (luaMatrix*) lua_touserdata(L, 1);
     lua_Integer x = luaL_checkinteger(L, 2);
+    printf("getting x: %i\n", x);
     lua_Integer y = luaL_checkinteger(L, 3);
-
-    lua_pushnumber(L, lm->matrix->matrix[y][x]);
-
+    printf("getting y: %i\n", y);
+    
+    lua_Number a = (double) lm->matrix->matrix[ ((dimension) y) ][ ((dimension) x) ]; 
+    printf("getting\n");
+    lua_pushnumber(L, a);
+    printf("pushing\n");
+    printf("return 1\n");
     return 1;
 }
 
@@ -158,18 +164,6 @@ int matrixL_mul(lua_State* L)
     return 1;
 }
 
-int matrixL_strassen(lua_State* L)
-{
-    luaMatrix* a = (luaMatrix*) lua_touserdata(L, 1);
-    luaMatrix* b = (luaMatrix*) lua_touserdata(L, 2);
-
-    Matrix* c = create_matrix(b->matrix->x, a->matrix->y);
-
-    int stat = strassen(a->matrix, b->matrix, c);
-
-    return 0;
-}
-
 const luaL_Reg functions[] = {
     {"create", matrixL_create},
     {"free", matrixL_free},
@@ -179,7 +173,6 @@ const luaL_Reg functions[] = {
     {"mul", matrixL_mul},
     {"get", matrixL_get},
     {"set", matrixL_set},
-    {"strassen", matrixL_strassen},
     {NULL, NULL}
 };
 

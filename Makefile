@@ -25,7 +25,7 @@ $(INTERFACEOBJ): $(INTERFACE) $(LUAHEADER) $(HEADSRCS)
 
 dll: $(OBJS) $(INTERFACEOBJ) $(LUAHEADER) $(HEADSRCS)
 	$(CC) $(OBJS) ./Objects/$(INTERFACEOBJ) $(DLLFLAG) -o matrix.dll
-	strip --strip-unneeded matrix.dll
+	# strip --strip-unneeded matrix.dll
 
 .PHONY: clean
 
