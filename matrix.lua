@@ -80,26 +80,17 @@ end
 
 --Get individual element in Matrix
 function Matrix:get(x, y)
-    print("size check")
     sizeCheck(self, x, y)
-    print("size convert")
     x, y = convert(x, y) --This converts x and y to 0 based indexing
-    print("getting...")
     local got = dll.get(self.matrix, x, y)
-    print("done")
     return got
 end
 
 --Set individual element in Matrix
 function Matrix:set(x, y, number)
-    print("size check")
     sizeCheck(self, x, y)
-    print("size check")
-    print("size convert")
     x, y = convert(x, y) --This converts x and y to 0 based indexing
-    print("setting...")
     dll.set(self.matrix, x, y, number)
-    print("done")
 end
 
 --Returns a formatted matrix.

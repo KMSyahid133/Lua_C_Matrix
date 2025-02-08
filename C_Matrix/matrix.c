@@ -1,6 +1,7 @@
 #include "matrix.h"
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 
 Matrix* create_matrix(dimension x, dimension y) {
     //Allocate the memory
@@ -20,12 +21,13 @@ Matrix* create_matrix(dimension x, dimension y) {
     new->matrix = (element**) malloc(y * sizeof(element*)); // Need Y amount of arrays 
 
     for (dimension i = 0; i < y; i++) 
-    {   
+    {  
         new->matrix[i] = (element*) malloc(x * sizeof(element)); // Need X amount of element space for each arrays
 
         //If allocation fails destroy everything
         if (new->matrix[i] == NULL)
         {
+            printf("C: Allocation fails");
             //Delete all of the 'cells'
             for (dimension j = 0; j < i; j++)
             {

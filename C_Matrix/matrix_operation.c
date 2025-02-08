@@ -202,7 +202,7 @@ int get_column(Matrix* target, dimension column, element* array)
 int matrix_mul(Matrix* a, Matrix* b, Matrix* result)
 {
     dimension X = 1; dimension Y = 1;
-
+    printf("C: A %i, B %i\n", a->x, b->y);
     //Dimension check
     if (a->x != b->y)
     {

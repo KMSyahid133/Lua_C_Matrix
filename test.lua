@@ -22,7 +22,6 @@ local b = Matrix.new(4, 4)
 time = os.clock() - time
 print("Time taken: "..(time).."s")
 
-print("bruh")
 for x, y, element in a:loop() do
     a:set(x, y, math.random(-1, 1))
 end
@@ -47,34 +46,21 @@ time = os.clock()
 local c = a*b
 time = os.clock() - time
 
-print(c:format(seperator,prefix))
+print(c:format(seperator, prefix))
 
 print("\nAddition")
 time = os.clock()
 c = a+b
 time = os.clock() - time
 
-print(c:format(seperator,prefix))
+print(c:format(seperator, prefix))
 
 print("\nSubtraction")
 time = os.clock()
 local c = a-b
 time = os.clock() - time
 
-print(c:format(seperator,prefix))
+print(c:format(seperator, prefix))
 
 print("Benchmark ends. Final time: ")
 print(time.."seconds")
-
-a = Matrix.new(2, 2)
-b = Matrix.new(2, 2)
-
-for x, y, element in a:loop() do
-    a:set(x, y, x+y)
-end
-
-for x, y, element in b:loop() do
-    b:set(x, y, x+y)
-end
-
-Matrix.strassen(a, b)

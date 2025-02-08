@@ -59,18 +59,22 @@ int matrixL_free(lua_State* L)
 //All of the checks must be implemented in Lua to avoid clutter in the C code
 int matrixL_get(lua_State* L)
 {
-    printf("matrixL_get\n");
+
     luaMatrix* lm = (luaMatrix*) lua_touserdata(L, 1);
     lua_Integer x = luaL_checkinteger(L, 2);
-    printf("getting x: %i\n", x);
+
     lua_Integer y = luaL_checkinteger(L, 3);
-    printf("getting y: %i\n", y);
+
     
-    lua_Number a = (double) lm->matrix->matrix[ ((dimension) y) ][ ((dimension) x) ]; 
-    printf("getting\n");
+    Matrix* m = lm->matrix;
+
+    element** tables = m->matrix;
+
+    lua_Number a = tables[ (y) ][ (x) ]; 
+
     lua_pushnumber(L, a);
-    printf("pushing\n");
-    printf("return 1\n");
+
+ 
     return 1;
 }
 
@@ -151,8 +155,8 @@ int matrixL_mul(lua_State* L)
     int stat = matrix_mul(a->matrix, b->matrix, c);
 
     if (stat != 1) {
-        fprintf(stderr, "Something went wrong");
-        luaL_error(L, "Something went wrong");
+        fprintf(stderr, "Something went wrong\n");
+        luaL_error(L, "Something went wrong\n");
     }
 
     //Create a pointer to the resulting matrix

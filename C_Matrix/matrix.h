@@ -6,7 +6,7 @@
 //This is the integer type that will used to define the matrix dimension
 //Must be a unsigned number for more range and error prevention
 //uint64_t is the default 
-#define dimension uint64_t
+#define dimension int64_t
 
 //This is the type that will be used
 //double is the default
