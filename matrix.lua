@@ -70,6 +70,10 @@ function Matrix.new(x, y)
 
     local self = {}
     local matrix = dll.create(x, y)
+    if matrix == nil then
+        error("Matrix creation failed. Possibly out of memory")
+        os.exit(1)
+    end
     self.matrix = matrix
     self.x = x
     self.y = y
@@ -145,7 +149,7 @@ function Matrix:loop()
         --increment call
         realX=realX+1
 
-        --If the iteration have completed the first row then it will reset and go to the next row
+        --If the iteration have completed the first row then it will re and go to the next row
         if (realX) > column then
             realX = 1
             realY = realY+1
@@ -158,6 +162,15 @@ function Matrix:loop()
 
         return realX, realY, self:get(realX, realY)
     end
+end
+
+function Matrix:map(func)
+    local new_matrix = Matrix.new(self.x, self.y)
+    for x, y, value in self:loop() do
+---@diagnostic disable-next-line: need-check-nil
+        new_matrix:set(x, y, func(value))
+    end
+    return new_matrix
 end
 
 ------------------

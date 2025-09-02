@@ -63,5 +63,13 @@ time = os.clock() - time
 
 print(c:format(seperator,prefix))
 
+print("Mapping")
+time = os.clock()
+-- using sigmoid function
+local d = a:map(function(x) return 1 / (1 + math.exp(-x)) end)
+time = os.clock() - time
+
+print(d:format(seperator,prefix))
+
 print("Benchmark ends. Final time: ")
 print(time.."seconds")
