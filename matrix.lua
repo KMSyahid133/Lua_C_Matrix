@@ -1,4 +1,11 @@
-local dll = package.loadlib("./matrix.dll", "lua_matrix_library")()
+local dll = package.loadlib("./matrix.dll", "lua_matrix_library")
+
+if not dll then
+    error("Failed to load matrix.dll")
+else
+    
+end
+dll = dll()
 
 --[[
     Compatibility problems:
@@ -82,6 +89,40 @@ function Matrix.new(x, y)
     return self
 end
 
+-- t is a table of tables
+function Matrix.fromTable(t)
+    if type(t) ~= "table" then
+        error("t must be a table", 1)
+    end
+    local rowLen = #t
+    -- making sure the given table is not ragged
+    local columnLen = #t[1]
+    for rowCount, row in ipairs(t) do
+        
+        if type(row) ~= "table" then
+            error("Values of t must be a table. At index "..tostring(rowCount), 1)    
+        end
+
+        if #row ~= columnLen then
+            print("Ragged table detected at index: "..tostring(rowCount))
+            print("Index | Len")
+            local str = " : "..tostring(columnLen)
+            for i = 1, rowCount-1, 1 do
+                print(tostring(i)..str)
+            end
+            print(tostring(rowCount).." : "..tostring(#row))
+
+            os.exit(1)
+        end
+    end
+
+    local self = Matrix.new(columnLen, rowLen)
+    self:inlineMap(function(value, x, y)
+        return t[y][x]
+    end)
+    return self
+end
+
 --Get individual element in Matrix
 function Matrix:get(x, y)
 
@@ -97,9 +138,7 @@ function Matrix:set(x, y, number)
     sizeCheck(self, x, y)
 
     x, y = convert(x, y) --This converts x and y to 0 based indexing
-
     dll.set(self.matrix, x, y, number)
-
 end
 
 --Returns a formatted matrix.
@@ -164,13 +203,24 @@ function Matrix:loop()
     end
 end
 
+-- this functions create a new matrix, if you want to mutate the original matrix use inlineMap
+-- map the entire matrix to a function
 function Matrix:map(func)
     local new_matrix = Matrix.new(self.x, self.y)
     for x, y, value in self:loop() do
 ---@diagnostic disable-next-line: need-check-nil
-        new_matrix:set(x, y, func(value))
+        new_matrix:set(x, y, func(value, x, y))
     end
     return new_matrix
+end
+
+-- this function mutates the given matrix, if you want to create a new matrix use map
+-- map the entire matrix to a function
+function Matrix:inlineMap(func)
+    for x, y, value in self:loop() do
+---@diagnostic disable-next-line: need-check-nil
+        self:set(x, y, func(value, x, y))
+    end
 end
 
 ------------------

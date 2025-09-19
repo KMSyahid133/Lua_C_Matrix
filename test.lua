@@ -70,6 +70,27 @@ local d = a:map(function(x) return 1 / (1 + math.exp(-x)) end)
 time = os.clock() - time
 
 print(d:format(seperator,prefix))
+print(time.." seconds")
 
-print("Benchmark ends. Final time: ")
-print(time.."seconds")
+print("Inline Mapping")
+time = os.clock()
+-- using sigmoid function
+d:inlineMap(function(x) return 1 / (1 + math.exp(-x)) end)
+time = os.clock() - time
+
+print(d:format(seperator,prefix))
+print(time.." seconds")
+
+print("From table test")
+
+local t = {
+    {1, 3},
+    {2, 3}
+}
+
+local mat = Matrix.fromTable(t)
+
+print(mat:format())
+
+print("TEST ENDS")
+
