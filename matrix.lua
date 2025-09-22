@@ -118,6 +118,11 @@ function Matrix.fromTable(t)
 
     local self = Matrix.new(columnLen, rowLen)
     self:inlineMap(function(value, x, y)
+
+        if type(t[y][x]) ~="number" then
+            error("Element of the given table must be a number not "..type(t[y][x]).." at Column "..tostring(x).." and Row "..tostring(y))
+        end
+
         return t[y][x]
     end)
     return self
