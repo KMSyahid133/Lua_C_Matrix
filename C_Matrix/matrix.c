@@ -57,6 +57,7 @@ void free_matrix(Matrix* target) {
     for (dimension y = 0; y < target->y; y++) {
         free(target->matrix[y]);
     }
+    free(target->matrix);
     free(target);
 }
 

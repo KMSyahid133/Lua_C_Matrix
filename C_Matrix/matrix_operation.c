@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <pthread.h>
 
 //BRUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUH
 void size_error(char Axis, dimension a, dimension b, char* variable_name_a, char* variable_name_b)
@@ -170,7 +171,7 @@ int get_row(Matrix* target, dimension row, element* array)
 {
     if (row > target->y)
     {
-        fprintf(stdout, "The row wanted is bigger than the size of matrix row");
+        fprintf(stdout, "The row wanted is larger than the row available\n");
         return -1;
     }
     
@@ -186,7 +187,7 @@ int get_column(Matrix* target, dimension column, element* array)
 {
     if (column > target->x)
     {
-        fprintf(stdout, "The column wanted is bigger than the size of matrix row");
+        fprintf(stdout, "The column wanted is larger than the column available\n");
         return -1;
     }
     
@@ -212,13 +213,13 @@ int matrix_mul(Matrix* a, Matrix* b, Matrix* result)
 
     if (result->y != a->y)
     {
-        fprintf(stderr, "Result matrix y dimension is not compatible\n");
+        fprintf(stderr, "Result matrix row is not compatible\n");
         return -1;
     }
 
     if (result->x != b->x)
     {
-        fprintf(stderr, "Result matrix x dimension is not compatible\n");
+        fprintf(stderr, "Result matrix column dimension is not compatible\n");
         return -1;
     }
 
@@ -229,13 +230,13 @@ int matrix_mul(Matrix* a, Matrix* b, Matrix* result)
 
     if (a_row == NULL)
     {
-        fprintf(stderr, "Lack of memory. Unable to perform matrix multiplication");
+        fprintf(stderr, "Lack of memory, can't allcate row. Unable to perform matrix multiplication\n");
         return -1;
     }
 
     if (b_column == NULL)
     {
-        fprintf(stderr, "Lack of memory. Unable to perform matrix multiplication");
+        fprintf(stderr, "Lack of memory, can't allocate column. Unable to perform matrix multiplication\n");
         return -1;
     }
 
@@ -257,5 +258,138 @@ int matrix_mul(Matrix* a, Matrix* b, Matrix* result)
     free(b_column);
 
     return 1;
+}
+
+
+
+typedef struct 
+{
+    element* row;   // the current row arrays
+    element* column;// the current column arrays, both row and column is used for dot operation
+    // these two array pair will synchronise using index;
+    // the amount of x and y is allocated => ((x*y) / thread_count) |> ceil   
+    dimension* x;   // the current x (column) index
+    dimension* y;   // the current y (row) index
+    int index;      // the current index for 'x' and 'y'
+} Argument_interleaving;
+
+int interleaving(Argument_interleaving* args)
+{
+    
+}
+
+// TODO: Implement row wise thread assignment
+// TODO: Implement column wise thread assignment
+// DOING: Implement cell interleaving thread assignment stratergy
+// TODO: change all calloc that is immediately initialised to something to malloc
+
+// a * b => result
+// thread_count: how many worker
+// scheduling_stratergy: 0 default, interleaving
+//                       1, row wise assignment
+//                       2, column wise assignment
+int parallel_multiplication(Matrix* a, Matrix* b, Matrix* result, int thread_count, int scheduling_stratergy)
+{
+    dimension X = 1; dimension Y = 1;
+
+    //Dimension check
+    if (a->x != b->y)
+    {
+        fprintf(stderr, "A column is not the same as B row\n");
+        return -1;
+    }
+
+    if (result->y != a->y)
+    {
+        fprintf(stderr, "Result matrix y dimension is not compatible\n");
+        return -1;
+    }
+
+    if (result->x != b->x)
+    {
+        fprintf(stderr, "Result matrix x dimension is not compatible\n");
+        return -1;
+    }
+
+    switch (scheduling_stratergy)
+    {
+    case 0:
+        goto interleave;
+        break;
+    
+    default:
+        break;
+    }
+
+
+    // implementation of interleaving
+interleave:
+    // allocate Argument_interleaving struct btw, not addresses
+    Argument_interleaving* thread_arguments = (Argument_interleaving*) malloc(thread_count * sizeof(Argument_interleaving));
+
+    if (thread_arguments == NULL)
+    {
+        fprintf(stderr, "Unable to allocate pthread arguments\n");
+        return -2;
+    }
+
+    // memory allocation
+    
+    for (int thread = 0; thread < thread_count; thread++)
+    {
+        
+        thread_arguments[thread].column = calloc(b->y, sizeof(element));
+        if (thread_arguments[thread].column == NULL) {
+            fprintf(stderr, "Failed to allocate memory for thread column array\n");
+            return -2;
+        }
+        
+        thread_arguments[thread].row = calloc(a->x, sizeof(element));
+        if (thread_arguments[thread].row == NULL) {
+            fprintf(stderr, "Failed to allocate memory for thread row array\n");
+            return -2;
+        }
+        
+    }
+    
+    //scehduling interleaving
+    for (dimension y = 0; y < result->y; y++)
+    {
+        for (dimension x = 0; x < result->x; x++)
+        {
+            int thread = (x+y) % thread_count;
+            thread_arguments[thread].x = x;
+            thread_arguments[thread].y = y;
+        }
+    }
+
+    //scheduling end
+
+    // start calculation
+    pthread_t* threads = (pthread_t*) malloc(thread_count * sizeof(pthread_t));
+
+    if (threads == NULL)
+    {
+        fprintf(stderr, "Unable to allocate pthread\n");
+        return -2;
+    }
+
+    for (int i = 0; i < thread_count; i++)
+    {
+        pthread_create(&threads[i], NULL, (void* (*)(void*))interleaving, a);
+    }
+
+    // clean up
+
+    for (int thread = 0; thread < thread_count; thread++)
+    {
+        free(thread_arguments[thread].column);
+        free(thread_arguments[thread].row);
+    }
+
+    goto multithread_multiply_end;
+
+ multithread_multiply_end:
+    return 0;
 }
 
