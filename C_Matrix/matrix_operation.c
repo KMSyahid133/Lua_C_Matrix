@@ -283,6 +283,15 @@ int interleaving(Argument_interleaving* args)
 // DOING: Implement cell interleaving thread assignment stratergy
 // TODO: change all calloc that is immediately initialised to something to malloc
 
+// Plan for row/column wise scheduling
+/*
+    Get lower bound (lb) and upper bound (ub)
+    Row|column count / thread_count => floor => count
+    lb = 0, ub = count for 1st
+    lb = ub + 1, ub = ub + count for thread_count times
+    do calculation
+*/
+
 // a * b => result
 // thread_count: how many worker
 // scheduling_stratergy: 0 default, interleaving
