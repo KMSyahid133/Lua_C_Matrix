@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <pthread.h>
 
-//BRUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUH
+//BRUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUH WHAT IS THIS
 void size_error(char Axis, dimension a, dimension b, char* variable_name_a, char* variable_name_b)
 {
     //Black magic
@@ -154,7 +154,8 @@ int matrix_sub(Matrix* a, Matrix* b, Matrix* c)
 //HELPER FUNCTIONS
 //=============================
 
-//both a and be should be the same len
+//both a and be needs to be the same len
+// calculate the dot product of a and b 
 element dot_product(dimension a_len, element* a, element* b)
 {
     element result = 0;
@@ -167,6 +168,7 @@ element dot_product(dimension a_len, element* a, element* b)
     return result;
 }
 
+// self explanatory, gets row from target and store it in array
 int get_row(Matrix* target, dimension row, element* array)
 {
     if (row > target->y)
@@ -183,6 +185,7 @@ int get_row(Matrix* target, dimension row, element* array)
     return 1;
 }
 
+// self explanatory, gets column from target and store it in array
 int get_column(Matrix* target, dimension column, element* array)
 {
     if (column > target->x)
@@ -199,7 +202,7 @@ int get_column(Matrix* target, dimension column, element* array)
     return 1;
 }
 
-
+// multiplies matrix a and b and store the result onto result
 int matrix_mul(Matrix* a, Matrix* b, Matrix* result)
 {
     dimension X = 1; dimension Y = 1;
@@ -266,6 +269,7 @@ typedef struct
 {
     element* row;   // the current row arrays
     element* column;// the current column arrays, both row and column is used for dot operation
+    
     // these two array pair will synchronise using index;
     // the amount of x and y is allocated => ((x*y) / thread_count) |> ceil   
     dimension* x;   // the current x (column) index
@@ -327,6 +331,8 @@ int parallel_multiplication(Matrix* a, Matrix* b, Matrix* result, int thread_cou
         break;
     
     default:
+        fprintf(stderr, "%i is not a valid argument\n", scheduling_stratergy);
+        return -1;
         break;
     }
 
@@ -347,13 +353,13 @@ interleave:
     for (int thread = 0; thread < thread_count; thread++)
     {
         
-        thread_arguments[thread].column = calloc(b->y, sizeof(element));
+        thread_arguments[thread].column = malloc(b->y * sizeof(element));
         if (thread_arguments[thread].column == NULL) {
             fprintf(stderr, "Failed to allocate memory for thread column array\n");
             return -2;
         }
         
-        thread_arguments[thread].row = calloc(a->x, sizeof(element));
+        thread_arguments[thread].row = malloc(a->x * sizeof(element));
         if (thread_arguments[thread].row == NULL) {
             fprintf(stderr, "Failed to allocate memory for thread row array\n");
             return -2;
